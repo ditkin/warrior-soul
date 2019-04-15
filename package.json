@@ -1,5 +1,5 @@
 {
-  "name": "impact-game",
+  "name": "warrior-soul",
   "version": "1.0.0",
   "description": "Impact is an HTML5 Game Engine. More info & documentation: http://impactjs.com/",
   "main": "index.js",
@@ -8,16 +8,8 @@
     "build": "webpack --config webpack.config.prod.js --progress -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cdreier/Impact.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cdreier/Impact/issues"
-  },
-  "homepage": "https://github.com/cdreier/Impact#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
