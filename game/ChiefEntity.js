@@ -1,14 +1,4 @@
-import {
-  Entity,
-  IG,
-  AnimationSheet,
-  Game,
-  Hitbox,
-  Input,
-  Sound,
-  System,
-  Timer,
-} from 'impact'
+import { Entity, IG, AnimationSheet, Hitbox, Sound, Timer } from 'impact'
 
 export default class ChiefEntity extends Entity {
   constructor(x, y, settings) {
@@ -87,8 +77,8 @@ export default class ChiefEntity extends Entity {
     if (
       res.pos.x <= 50 ||
       res.pos.y <= 50 ||
-      res.pos.x >= System.width - 90 ||
-      res.pos.y > System.height - 90
+      res.pos.x >= IG.instance.system.width - 90 ||
+      res.pos.y > IG.instance.system.height - 90
     ) {
       if (this.type == Entity.TYPE.A && this.deathTimerA.delta() >= 0) {
         this.death.play()
@@ -97,26 +87,26 @@ export default class ChiefEntity extends Entity {
         this.soulA = 100
         if (this.stocksA == 0) {
           this.p2iswin.play()
-          Game.winner = 'Player 2 WINS!'
+          IG.instance.game.winner = 'Player 2 WINS!'
           this.kill()
-          Game.state = Game.GAME_OVER
+          IG.instance.game.state = IG.instance.game.GAME_OVER
         }
       } else if (this.type == Entity.TYPE.B && this.deathTimerB.delta() >= 0) {
         this.death.play()
         this.stocksB--
         this.deathTimerB.set(5)
         this.soulB = 100
-        this.pos.x = System.width / 2
-        this.pos.y = System.width / 2
+        this.pos.x = IG.instance.system.width / 2
+        this.pos.y = IG.instance.system.width / 2
         if (this.stocksB == 0) {
           this.p1iswin.play()
-          Game.winner = 'Player 1 WINS!'
+          IG.instance.game.winner = 'Player 1 WINS!'
           this.kill()
-          Game.state = Game.GAME_OVER
+          IG.instance.game.state = IG.instance.game.GAME_OVER
         }
       }
     }
-    this.parent(res)
+    super.handleMovementTrace(res)
   }
 
   checkMovement() {
@@ -139,20 +129,26 @@ export default class ChiefEntity extends Entity {
         this.shootTimerA.delta() >= 0 &&
         this.stunTimerA.delta() >= 0
       ) {
-        if (Input.state('p1dodge')) {
+        if (IG.instance.input.state('p1dodge')) {
           this.dodgeTimerA.set(1.7)
           this.attTimerA.set(1.7)
           this.vel.x = 0
           this.accel.x = 0
           this.accel.y = 0
         }
-        if (Input.state('p1left') && !Input.state('p1right')) {
+        if (
+          IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right')
+        ) {
           if (this.standing) {
             this.accel.x = -this.walkAcc
             this.vel.x /= this.damping
           }
           if (this.standing == false) this.accel.x = -this.walkAcc / 40
-        } else if (Input.state('p1right') && !Input.state('p1left')) {
+        } else if (
+          IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1left')
+        ) {
           if (this.standing) {
             this.accel.x = this.walkAcc
             this.vel.x /= this.damping
@@ -160,18 +156,22 @@ export default class ChiefEntity extends Entity {
           if (this.standing == false) this.accel.x = this.walkAcc / 40
         } else if (
           this.standing &&
-          !Input.state('p1left') &&
-          !Input.state('p1right')
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right')
         ) {
           this.accel.x = 0
           this.vel.x /= this.damping
         }
-        if (Input.state('p1down') && !Input.state('p1up') && this.standing) {
+        if (
+          IG.instance.input.state('p1down') &&
+          !IG.instance.input.state('p1up') &&
+          this.standing
+        ) {
           this.vel.x = this.vel.x / 2
           this.accel.x = 0
         }
 
-        if (Input.state('p1up') && this.standing) {
+        if (IG.instance.input.state('p1up') && this.standing) {
           this.vel.y = this.jumpVel
           this.canJumpAgain = true
 
@@ -179,7 +179,7 @@ export default class ChiefEntity extends Entity {
         }
         //logic for double jump, including the lock on triple jumps / higher
         else if (
-          Input.state('p1up') &&
+          IG.instance.input.state('p1up') &&
           this.standing == false &&
           this.canJumpAgain &&
           this.jumpTimerA.delta() >= 0
@@ -188,7 +188,7 @@ export default class ChiefEntity extends Entity {
           this.canJumpAgain = false
         }
         if (
-          Input.state('p1down') &&
+          IG.instance.input.state('p1down') &&
           this.standing == false &&
           this.vel.y > -75
         ) {
@@ -196,14 +196,14 @@ export default class ChiefEntity extends Entity {
         }
         //neutral attack, a bullet
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -224,7 +224,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -250,14 +250,14 @@ export default class ChiefEntity extends Entity {
           this.shootTimerA.set(0.5)
         }
         if (
-          Input.state('p1att') &&
-          Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -278,7 +278,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -305,14 +305,14 @@ export default class ChiefEntity extends Entity {
           this.shootTimerA.set(1.0)
         }
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -333,7 +333,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -360,14 +360,14 @@ export default class ChiefEntity extends Entity {
           this.shootTimerA.set(1.0)
         }
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           this.accel.y = 0
-          this.hitbox = Game.spawnEntity(
+          this.hitbox = IG.instance.game.spawnEntity(
             Hitbox,
             this.pos.x,
             this.pos.y - (this.size.y * 3) / 4,
@@ -392,16 +392,16 @@ export default class ChiefEntity extends Entity {
         }
         //lowshot, machine gun attack
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          IG.instance.input.state('p1down')
         ) {
           this.vel.y = 0
           this.accel.y = 0
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + (this.size.x * 2) / 3,
               this.pos.y,
@@ -422,7 +422,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - (this.size.x * 2) / 3,
               this.pos.y,
@@ -458,20 +458,26 @@ export default class ChiefEntity extends Entity {
         this.shootTimerB.delta() >= 0 &&
         this.stunTimerB.delta() >= 0
       ) {
-        if (Input.state('p2dodge')) {
+        if (IG.instance.input.state('p2dodge')) {
           this.dodgeTimerB.set(2)
           this.attTimerB.set(1.2)
           this.vel.x = 0
           this.accel.x = 0
           this.accel.y = 0
         }
-        if (Input.state('p2left') && !Input.state('p2right')) {
+        if (
+          IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right')
+        ) {
           if (this.standing) {
             this.accel.x = -this.walkAcc
             this.vel.x /= this.damping
           }
           if (this.standing == false) this.accel.x = -this.walkAcc / 40
-        } else if (Input.state('p2right') && !Input.state('p2left')) {
+        } else if (
+          IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2left')
+        ) {
           if (this.standing) {
             this.accel.x = this.walkAcc
             this.vel.x /= this.damping
@@ -479,18 +485,22 @@ export default class ChiefEntity extends Entity {
           if (this.standing == false) this.accel.x = this.walkAcc / 40
         } else if (
           this.standing &&
-          !Input.state('p2left') &&
-          !Input.state('p2right')
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right')
         ) {
           this.accel.x = 0
           this.vel.x /= this.damping
         }
-        if (Input.state('p2down') && !Input.state('p2up') && this.standing) {
+        if (
+          IG.instance.input.state('p2down') &&
+          !IG.instance.input.state('p2up') &&
+          this.standing
+        ) {
           this.vel.x = this.vel.x / 2
           this.accel.x = 0
         }
 
-        if (Input.state('p2up') && this.standing) {
+        if (IG.instance.input.state('p2up') && this.standing) {
           this.vel.y = this.jumpVel
           this.canJumpAgain = true
 
@@ -498,7 +508,7 @@ export default class ChiefEntity extends Entity {
         }
         //logic for double jump, including the lock on triple jumps / higher
         else if (
-          Input.state('p2up') &&
+          IG.instance.input.state('p2up') &&
           this.standing == false &&
           this.canJumpAgain &&
           this.jumpTimerB.delta() >= 0
@@ -507,7 +517,7 @@ export default class ChiefEntity extends Entity {
           this.canJumpAgain = false
         }
         if (
-          Input.state('p2down') &&
+          IG.instance.input.state('p2down') &&
           this.standing == false &&
           this.vel.y > -75
         ) {
@@ -515,14 +525,14 @@ export default class ChiefEntity extends Entity {
         }
         //neutral attack, a bullet
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -543,7 +553,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -569,14 +579,14 @@ export default class ChiefEntity extends Entity {
           this.shootTimerB.set(0.5)
         }
         if (
-          Input.state('p2att') &&
-          Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -597,7 +607,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -625,14 +635,14 @@ export default class ChiefEntity extends Entity {
         }
         //a strong explosion meant for juggling.
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -653,7 +663,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -680,14 +690,14 @@ export default class ChiefEntity extends Entity {
           this.shootTimerB.set(1)
         }
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           this.accel.y = 0
-          this.hitbox = Game.spawnEntity(
+          this.hitbox = IG.instance.game.spawnEntity(
             Hitbox,
             this.pos.x,
             this.pos.y - (this.size.y * 3) / 4,
@@ -712,16 +722,16 @@ export default class ChiefEntity extends Entity {
         }
         //lowshot, a high priority rifle-attack.
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          IG.instance.input.state('p2down')
         ) {
           this.vel.y = 0
           this.accel.y = 0
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + (this.size.x * 2) / 3,
               this.pos.y,
@@ -742,7 +752,7 @@ export default class ChiefEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - (this.size.x * 2) / 3,
               this.pos.y,
@@ -785,7 +795,11 @@ export default class ChiefEntity extends Entity {
     if (this.vel.y < -15) this.currentAnim = this.anims.jumping
 
     if (this.type == Entity.TYPE.A) {
-      if (Input.state('p1down') && !Input.state('p1up') && this.standing)
+      if (
+        IG.instance.input.state('p1down') &&
+        !IG.instance.input.state('p1up') &&
+        this.standing
+      )
         this.currentAnim = this.anims.crouched
       if (this.shootTimerA.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerA.delta() < 0) this.currentAnim = this.anims.stunned
@@ -793,7 +807,11 @@ export default class ChiefEntity extends Entity {
         this.currentAnim = this.anims.dodging
       this.currentAnim.flip.x = this.facingRight
     } else if (this.type == Entity.TYPE.B) {
-      if (Input.state('p2down') && !Input.state('p2up') && this.standing)
+      if (
+        IG.instance.input.state('p2down') &&
+        !IG.instance.input.state('p2up') &&
+        this.standing
+      )
         this.currentAnim = this.anims.crouched
       if (this.shootTimerB.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerB.delta() < 0) this.currentAnim = this.anims.stunned

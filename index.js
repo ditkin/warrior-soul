@@ -1,7 +1,14 @@
-import {IG, Debug} from 'impact'
-import MyGame from './box2dgame/main'
+import { IG, Debug } from 'impact'
+import WarriorSoulGame from './box2dgame/main'
 import './entities.generated'
 
-
-const instance = IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
+const instance = IG.createInstance(
+  '#canvas',
+  WarriorSoulGame,
+  60,
+  1000,
+  1000,
+  1
+)
+//const instance = IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
 Debug.createDebugger(instance)

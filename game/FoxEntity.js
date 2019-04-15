@@ -2,7 +2,6 @@ import {
   Entity,
   IG,
   AnimationSheet,
-  Game,
   Hitbox,
   Input,
   Sound,
@@ -14,24 +13,27 @@ export default class FoxEntity extends Entity {
   constructor(x, y, settings) {
     super(x, y, settings)
 
-    this.animSheet = new AnimationSheet('media/chiefanim.png', 60, 64)
-
+    this.animSheet = new AnimationSheet('media/fox.png', 72, 72)
     this.ouch = new Sound('media/sounds/ouch.*')
     this.p1iswin = new Sound('media/sounds/p1win.*')
     this.p2iswin = new Sound('media/sounds/p2wins.*')
     this.death = new Sound('media/sounds/death.*')
-    this.size = { x: 60, y: 64 }
+    this.shine1 = new Sound('media/sounds/shine1.*')
+    this.summonzebra = new Sound('media/sounds/summonzebra.*')
+    this.hayaa = new Sound('media/sounds/hayaa.*')
+    this.size = { x: 50, y: 60 }
     this.maxVel = { x: 900, y: 900 }
-    this.walkAcc = 2200
-    this.jumpVel = -400
-    this.damping = 1.3
+    this.walkAcc = 3000
+    this.jumpVel = -500
+    this.damping = 1.28
     this.jumped = false
     this.stocksA = 4
     this.stocksB = 4
     this.soulA = 100
     this.soulB = 100
-    //timers for stun dodge attack
-    this.stunTimerA = new Timer(0.5)
+    this.illurightA = false
+    this.illurightB = false
+    this.this.stunTimerA = new Timer(0.5) //=imers for stun, dodge, attack
     this.stunTimerB = new Timer(0.5)
     this.jumpTimerA = new Timer(0.5)
     this.jumpTimerB = new Timer(0.5)
@@ -43,14 +45,33 @@ export default class FoxEntity extends Entity {
     this.deathTimerB = new Timer(0.5)
     this.shootTimerA = new Timer(0.5)
     this.shootTimerB = new Timer(0.5)
+    this.blastTimerA = new Timer(0.5)
+    this.blastTimerB = new Timer(0.5)
+    this.shineTimerA = new Timer(0.5)
+    this.shineTimerB = new Timer(0.5)
+    this.kickTimerA = new Timer(0.5)
+    this.kickTimerB = new Timer(0.5)
+    this.illusionTimerA = new Timer(0.5)
+    this.illusionTimerB = new Timer(0.5)
 
-    this.addAnim('idle', 1, [0], true)
-    this.addAnim('moving', 0.15, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], false)
-    this.addAnim('jumping', 0.15, [12, 13, 14], true)
-    this.addAnim('stunned', 0.1, [6, 7], false)
-    this.addAnim('shooting', 0.3, [0, 1], false)
-    this.addAnim('crouched', 0.2, [15, 16, 17], true)
-    this.addAnim('dodging', 0.1, [18, 0], false)
+    this.addAnim('idle', 0.6, [15], false)
+    this.addAnim('moving', 0.12, [30, 31, 32, 33], false)
+    this.addAnim('jumping', 0.2, [31, 33, 48, 49, 16, 110], true)
+    this.addAnim('flying', 0.1, [65, 66, 68, 69, 87, 88], false)
+    this.addAnim('shooting', 0.2, [72, 73, 74, 75, 76], false)
+    this.addAnim('throwing', 0.1, [147, 148, 150, 151, 152], false)
+    this.addAnim('shining', 0.1, [111, 136], false)
+    this.addAnim('stunned', 0.3, [123, 131, 178, 179], false)
+    this.addAnim('crouched', 0.3, [13, 140], true)
+    this.addAnim('dodging', 0.1, [86, 91], false)
+    this.addAnim('blasting', 0.15, [130, 134, 136], false)
+    this.addAnim(
+      'illusion',
+      0.1,
+      [84, 84, 111, 129, 111, 129, 111, 129, 111, 129],
+      false
+    )
+    this.addAnim('kick', 0.2, [159, 164, 167, 167, 167, 168], true)
 
     this.currentAnim = this.anims.idle
     if (settings.entype == 'A') {
@@ -97,9 +118,9 @@ export default class FoxEntity extends Entity {
         this.soulA = 100
         if (this.stocksA == 0) {
           this.p2iswin.play()
-          Game.winner = 'Player 2 WINS!'
+          IG.instance.game.winner = 'Player 2 WINS!'
           this.kill()
-          Game.state = Game.GAME_OVER
+          IG.instance.game.state = IG.instance.game.GAME_OVER
         }
       } else if (this.type == Entity.TYPE.B && this.deathTimerB.delta() >= 0) {
         this.death.play()
@@ -110,13 +131,13 @@ export default class FoxEntity extends Entity {
         this.pos.y = System.width / 2
         if (this.stocksB == 0) {
           this.p1iswin.play()
-          Game.winner = 'Player 1 WINS!'
+          IG.instance.game.winner = 'Player 1 WINS!'
           this.kill()
-          Game.state = Game.GAME_OVER
+          IG.instance.game.state = IG.instance.game.GAME_OVER
         }
       }
     }
-    this.parent(res)
+    super.handleMovementTrace(res)
   }
 
   checkMovement() {
@@ -203,7 +224,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -224,7 +245,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -257,7 +278,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -278,7 +299,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -312,7 +333,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -333,7 +354,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -367,7 +388,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p1down')
         ) {
           this.accel.y = 0
-          this.hitbox = Game.spawnEntity(
+          this.hitbox = IG.instance.game.spawnEntity(
             Hitbox,
             this.pos.x,
             this.pos.y - (this.size.y * 3) / 4,
@@ -401,7 +422,7 @@ export default class FoxEntity extends Entity {
           this.vel.y = 0
           this.accel.y = 0
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + (this.size.x * 2) / 3,
               this.pos.y,
@@ -422,7 +443,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - (this.size.x * 2) / 3,
               this.pos.y,
@@ -522,7 +543,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -543,7 +564,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y - this.size.y / 2,
@@ -576,7 +597,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -597,7 +618,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -632,7 +653,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + this.size.x / 2,
               this.pos.y,
@@ -653,7 +674,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - this.size.x / 2,
               this.pos.y,
@@ -687,7 +708,7 @@ export default class FoxEntity extends Entity {
           !Input.state('p2down')
         ) {
           this.accel.y = 0
-          this.hitbox = Game.spawnEntity(
+          this.hitbox = IG.instance.game.spawnEntity(
             Hitbox,
             this.pos.x,
             this.pos.y - (this.size.y * 3) / 4,
@@ -721,7 +742,7 @@ export default class FoxEntity extends Entity {
           this.vel.y = 0
           this.accel.y = 0
           if (!this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x + (this.size.x * 2) / 3,
               this.pos.y,
@@ -742,7 +763,7 @@ export default class FoxEntity extends Entity {
               }
             )
           } else if (this.currentAnim.flip.x) {
-            this.hitbox = Game.spawnEntity(
+            this.hitbox = IG.instance.game.spawnEntity(
               Hitbox,
               this.pos.x - (this.size.x * 2) / 3,
               this.pos.y,
