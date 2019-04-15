@@ -1,0 +1,38 @@
+{
+  "name": "impact-game",
+  "version": "1.0.0",
+  "description": "Impact is an HTML5 Game Engine. More info & documentation: http://impactjs.com/",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --watch --inline --colors --port 8080",
+    "build": "webpack --config webpack.config.prod.js --progress -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdreier/Impact.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cdreier/Impact/issues"
+  },
+  "homepage": "https://github.com/cdreier/Impact#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.6",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.4",
+    "eslint": "^5.9.0",
+    "eslint-plugin-classes": "^0.1.1",
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "impact": "file:lib",
+    "weltmeister": "file:weltmeister"
+  }
+}
