@@ -6,10 +6,10 @@ module.exports = {
     wm: './start.weltmeister.js',
   },
   mode: 'development',
-  devtool: 'source-map',
+  devtool: '#source-map',
   devServer: {
     contentBase: __dirname + '/game',
-    before: (app) => {
+    before: app => {
       app.use('/media', express.static('./media'))
     },
   },
@@ -26,9 +26,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-            ],
+            presets: ['@babel/preset-env'],
             plugins: [
               ['@babel/plugin-proposal-class-properties', { loose: true }],
             ],
@@ -38,9 +36,6 @@ module.exports = {
     ],
   },
   watchOptions: {
-    ignored: [
-      /game\/levels\/.*/, 
-      /node_modules/,
-    ],
+    ignored: [/game\/levels\/.*/, /node_modules/],
   },
 }

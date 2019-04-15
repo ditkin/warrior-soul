@@ -1,4 +1,5 @@
-import { Entity, IG, AnimationSheet, Hitbox, Sound, Timer } from 'impact'
+import { Entity, IG, AnimationSheet, Sound, Timer } from 'impact'
+import Hitbox from './Hitbox'
 
 export default class ChiefEntity extends Entity {
   constructor(x, y, settings) {

@@ -1,13 +1,5 @@
-import {
-  Entity,
-  IG,
-  AnimationSheet,
-  Hitbox,
-  Input,
-  Sound,
-  System,
-  Timer,
-} from 'impact'
+import { Entity, IG, AnimationSheet, Input, Sound, System, Timer } from 'impact'
+import Hitbox from './Hitbox'
 
 export default class FoxEntity extends Entity {
   constructor(x, y, settings) {
@@ -160,20 +152,26 @@ export default class FoxEntity extends Entity {
         this.shootTimerA.delta() >= 0 &&
         this.stunTimerA.delta() >= 0
       ) {
-        if (Input.state('p1dodge')) {
+        if (IG.instance.input.state('p1dodge')) {
           this.dodgeTimerA.set(1.7)
           this.attTimerA.set(1.7)
           this.vel.x = 0
           this.accel.x = 0
           this.accel.y = 0
         }
-        if (Input.state('p1left') && !Input.state('p1right')) {
+        if (
+          IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right')
+        ) {
           if (this.standing) {
             this.accel.x = -this.walkAcc
             this.vel.x /= this.damping
           }
           if (this.standing == false) this.accel.x = -this.walkAcc / 40
-        } else if (Input.state('p1right') && !Input.state('p1left')) {
+        } else if (
+          IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1left')
+        ) {
           if (this.standing) {
             this.accel.x = this.walkAcc
             this.vel.x /= this.damping
@@ -181,18 +179,22 @@ export default class FoxEntity extends Entity {
           if (this.standing == false) this.accel.x = this.walkAcc / 40
         } else if (
           this.standing &&
-          !Input.state('p1left') &&
-          !Input.state('p1right')
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right')
         ) {
           this.accel.x = 0
           this.vel.x /= this.damping
         }
-        if (Input.state('p1down') && !Input.state('p1up') && this.standing) {
+        if (
+          IG.instance.input.state('p1down') &&
+          !IG.instance.input.state('p1up') &&
+          this.standing
+        ) {
           this.vel.x = this.vel.x / 2
           this.accel.x = 0
         }
 
-        if (Input.state('p1up') && this.standing) {
+        if (IG.instance.input.state('p1up') && this.standing) {
           this.vel.y = this.jumpVel
           this.canJumpAgain = true
 
@@ -200,7 +202,7 @@ export default class FoxEntity extends Entity {
         }
         //logic for double jump, including the lock on triple jumps / higher
         else if (
-          Input.state('p1up') &&
+          IG.instance.input.state('p1up') &&
           this.standing == false &&
           this.canJumpAgain &&
           this.jumpTimerA.delta() >= 0
@@ -209,7 +211,7 @@ export default class FoxEntity extends Entity {
           this.canJumpAgain = false
         }
         if (
-          Input.state('p1down') &&
+          IG.instance.input.state('p1down') &&
           this.standing == false &&
           this.vel.y > -75
         ) {
@@ -217,11 +219,11 @@ export default class FoxEntity extends Entity {
         }
         //neutral attack, a bullet
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -271,11 +273,11 @@ export default class FoxEntity extends Entity {
           this.shootTimerA.set(0.5)
         }
         if (
-          Input.state('p1att') &&
-          Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -326,11 +328,11 @@ export default class FoxEntity extends Entity {
           this.shootTimerA.set(1.0)
         }
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          Input.state('p1right') &&
-          !Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -381,11 +383,11 @@ export default class FoxEntity extends Entity {
           this.shootTimerA.set(1.0)
         }
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          Input.state('p1up') &&
-          !Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          IG.instance.input.state('p1up') &&
+          !IG.instance.input.state('p1down')
         ) {
           this.accel.y = 0
           this.hitbox = IG.instance.game.spawnEntity(
@@ -413,11 +415,11 @@ export default class FoxEntity extends Entity {
         }
         //lowshot, machine gun attack
         if (
-          Input.state('p1att') &&
-          !Input.state('p1left') &&
-          !Input.state('p1right') &&
-          !Input.state('p1up') &&
-          Input.state('p1down')
+          IG.instance.input.state('p1att') &&
+          !IG.instance.input.state('p1left') &&
+          !IG.instance.input.state('p1right') &&
+          !IG.instance.input.state('p1up') &&
+          IG.instance.input.state('p1down')
         ) {
           this.vel.y = 0
           this.accel.y = 0
@@ -479,20 +481,26 @@ export default class FoxEntity extends Entity {
         this.shootTimerB.delta() >= 0 &&
         this.stunTimerB.delta() >= 0
       ) {
-        if (Input.state('p2dodge')) {
+        if (IG.instance.input.state('p2dodge')) {
           this.dodgeTimerB.set(2)
           this.attTimerB.set(1.2)
           this.vel.x = 0
           this.accel.x = 0
           this.accel.y = 0
         }
-        if (Input.state('p2left') && !Input.state('p2right')) {
+        if (
+          IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right')
+        ) {
           if (this.standing) {
             this.accel.x = -this.walkAcc
             this.vel.x /= this.damping
           }
           if (this.standing == false) this.accel.x = -this.walkAcc / 40
-        } else if (Input.state('p2right') && !Input.state('p2left')) {
+        } else if (
+          IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2left')
+        ) {
           if (this.standing) {
             this.accel.x = this.walkAcc
             this.vel.x /= this.damping
@@ -500,18 +508,22 @@ export default class FoxEntity extends Entity {
           if (this.standing == false) this.accel.x = this.walkAcc / 40
         } else if (
           this.standing &&
-          !Input.state('p2left') &&
-          !Input.state('p2right')
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right')
         ) {
           this.accel.x = 0
           this.vel.x /= this.damping
         }
-        if (Input.state('p2down') && !Input.state('p2up') && this.standing) {
+        if (
+          IG.instance.input.state('p2down') &&
+          !IG.instance.input.state('p2up') &&
+          this.standing
+        ) {
           this.vel.x = this.vel.x / 2
           this.accel.x = 0
         }
 
-        if (Input.state('p2up') && this.standing) {
+        if (IG.instance.input.state('p2up') && this.standing) {
           this.vel.y = this.jumpVel
           this.canJumpAgain = true
 
@@ -519,7 +531,7 @@ export default class FoxEntity extends Entity {
         }
         //logic for double jump, including the lock on triple jumps / higher
         else if (
-          Input.state('p2up') &&
+          IG.instance.input.state('p2up') &&
           this.standing == false &&
           this.canJumpAgain &&
           this.jumpTimerB.delta() >= 0
@@ -528,7 +540,7 @@ export default class FoxEntity extends Entity {
           this.canJumpAgain = false
         }
         if (
-          Input.state('p2down') &&
+          IG.instance.input.state('p2down') &&
           this.standing == false &&
           this.vel.y > -75
         ) {
@@ -536,11 +548,11 @@ export default class FoxEntity extends Entity {
         }
         //neutral attack, a bullet
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -590,11 +602,11 @@ export default class FoxEntity extends Entity {
           this.shootTimerB.set(0.5)
         }
         if (
-          Input.state('p2att') &&
-          Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -646,11 +658,11 @@ export default class FoxEntity extends Entity {
         }
         //a strong explosion meant for juggling.
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          Input.state('p2right') &&
-          !Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           if (!this.currentAnim.flip.x) {
             this.hitbox = IG.instance.game.spawnEntity(
@@ -701,11 +713,11 @@ export default class FoxEntity extends Entity {
           this.shootTimerB.set(1)
         }
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          Input.state('p2up') &&
-          !Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          IG.instance.input.state('p2up') &&
+          !IG.instance.input.state('p2down')
         ) {
           this.accel.y = 0
           this.hitbox = IG.instance.game.spawnEntity(
@@ -733,11 +745,11 @@ export default class FoxEntity extends Entity {
         }
         //lowshot, a high priority rifle-attack.
         if (
-          Input.state('p2att') &&
-          !Input.state('p2left') &&
-          !Input.state('p2right') &&
-          !Input.state('p2up') &&
-          Input.state('p2down')
+          IG.instance.input.state('p2att') &&
+          !IG.instance.input.state('p2left') &&
+          !IG.instance.input.state('p2right') &&
+          !IG.instance.input.state('p2up') &&
+          IG.instance.input.state('p2down')
         ) {
           this.vel.y = 0
           this.accel.y = 0
@@ -806,7 +818,11 @@ export default class FoxEntity extends Entity {
     if (this.vel.y < -15) this.currentAnim = this.anims.jumping
 
     if (this.type == Entity.TYPE.A) {
-      if (Input.state('p1down') && !Input.state('p1up') && this.standing)
+      if (
+        IG.instance.input.state('p1down') &&
+        !IG.instance.input.state('p1up') &&
+        this.standing
+      )
         this.currentAnim = this.anims.crouched
       if (this.shootTimerA.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerA.delta() < 0) this.currentAnim = this.anims.stunned
@@ -814,7 +830,11 @@ export default class FoxEntity extends Entity {
         this.currentAnim = this.anims.dodging
       this.currentAnim.flip.x = this.facingRight
     } else if (this.type == Entity.TYPE.B) {
-      if (Input.state('p2down') && !Input.state('p2up') && this.standing)
+      if (
+        IG.instance.input.state('p2down') &&
+        !IG.instance.input.state('p2up') &&
+        this.standing
+      )
         this.currentAnim = this.anims.crouched
       if (this.shootTimerB.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerB.delta() < 0) this.currentAnim = this.anims.stunned

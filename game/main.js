@@ -1,9 +1,16 @@
-import { IG, Entity, Game, Font, Input, Image, Sound, IG.instance.system, Timer } from 'impact'
+import IG from '../lib/impact'
+import Game from '../lib/game'
+import Font from '../lib/font'
+import Input from '../lib/input'
+import Image from '../lib/image'
+import { Sound } from '../lib/sound'
+import Timer from '../lib/timer'
 
-const data = require('./levels/aaa.json')
-import PlayerEntity from './PlayerEntity'
+import SlasherEntity from './SlasherEntity'
 import ChiefEntity from './ChiefEntity'
 import FoxEntity from './FoxEntity'
+import Battlefield from './battlefield'
+import Warioware from './warioware'
 
 export default class WarriorSoulGame extends Game {
   // bgmusic = new Sound('media/bg.*', false)
@@ -88,111 +95,111 @@ export default class WarriorSoulGame extends Game {
       case this.START:
         if (!this.soundplayed) this.warriorsoul.play()
         this.soundplayed = true
-        if (Input.state('start')) {
+        if (IG.instance.input.state('start')) {
           this.scrollTimer.set(2)
           this.state++
         }
         break
       //instructinoal screen.
       case this.INSTR:
-        if (Input.state('start') && this.scrollTimer.delta() >= 0) {
+        if (IG.instance.input.state('start') && this.scrollTimer.delta() >= 0) {
           this.stagepick.play()
           this.state++
         }
         break
       case this.STAGE:
-        if (Input.state('1')) {
+        if (IG.instance.input.state('1')) {
           if (!this.bfplayed) this.battlef.play()
           this.bfplayed = true
           this.loadLevel(Battlefield)
           this.levelpicked = true
-        } else if (Input.state('2')) {
+        } else if (IG.instance.input.state('2')) {
           if (!this.wwplayed) this.wariow.play()
           this.wwplayed = true
           this.loadLevel(Warioware)
           this.levelpicked = true
         }
-        if (this.levelpicked == true && Input.state('start')) {
+        if (this.levelpicked == true && IG.instance.input.state('start')) {
           this.p1choose.play()
           this.p1 = null
           this.state++
         }
         break
       case this.CHAR1:
-        if (Input.state('1') && this.p1 == null) {
+        if (IG.instance.input.state('1') && this.p1 == null) {
           this.chiefSelect.play()
           this.p1 = this.spawnEntity(
-            Chief,
+            ChiefEntity,
             IG.instance.system.width / 5,
             IG.instance.system.height * 0.6,
             { entype: 'A', stocks: 4 }
           )
           //say CHIEF
         }
-        if (Input.state('2') && this.p1 == null) {
+        if (IG.instance.input.state('2') && this.p1 == null) {
           this.kiler.play()
           this.p1 = this.spawnEntity(
-            Slasher,
+            SlasherEntity,
             IG.instance.system.width / 5,
             IG.instance.system.height * 0.6,
             { entype: 'A', stocks: 4 }
           )
         }
-        if (Input.state('3') && this.p1 == null) {
+        if (IG.instance.input.state('3') && this.p1 == null) {
           this.foxe.play()
           this.p1 = this.spawnEntity(
-            Fox,
+            FoxEntity,
             IG.instance.system.width / 5,
             IG.instance.system.height * 0.6,
             { entype: 'A', stocks: 4 }
           )
         }
-        if (Input.state('x') && this.p1 != null) {
+        if (IG.instance.input.state('x') && this.p1 != null) {
           this.p1.kill()
           this.p1 = null
         }
 
-        if (Input.state('start') && this.p1 != null) {
+        if (IG.instance.input.state('start') && this.p1 != null) {
           this.p2choose.play()
           this.p2 = null
           this.state++
         }
         break
       case this.CHAR2:
-        if (Input.state('1') && this.p2 == null) {
+        if (IG.instance.input.state('1') && this.p2 == null) {
           this.chiefSelect.play()
           this.p2 = this.spawnEntity(
-            Chief,
+            ChiefEntity,
             IG.instance.system.width * 0.75,
             IG.instance.system.height * 0.6,
             { entype: 'B', stocks: 4 }
           )
           this.p2.currentAnim.flip.x
         }
-        if (Input.state('2') && this.p2 == null) {
+        if (IG.instance.input.state('2') && this.p2 == null) {
           this.kiler.play()
           this.p2 = this.spawnEntity(
-            Slasher,
+            SlasherEntity,
             IG.instance.system.width * 0.75,
             IG.instance.system.height * 0.6,
             { entype: 'B', stocks: 4 }
           )
           this.p2.currentAnim.flip.x
         }
-        if (Input.state('3') && this.p2 == null) {
+        if (IG.instance.input.state('3') && this.p2 == null) {
           this.foxe.play()
           this.p2 = this.spawnEntity(
-            Fox,
+            FoxEntity,
             IG.instance.system.width * 0.75,
             IG.instance.system.height * 0.6,
             { entype: 'B', stocks: 4 }
           )
         }
-        if (Input.state('x') && this.p2 != null) {
+        if (IG.instance.input.state('x') && this.p2 != null) {
           this.p2.kill()
           this.p2 = null
         }
-        if (Input.state('start') && this.p2 != null) {
+        if (IG.instance.input.state('start') && this.p2 != null) {
           this.fight.play()
           this.state++
         }
@@ -201,7 +208,7 @@ export default class WarriorSoulGame extends Game {
         this.gravity = 600
         break
       case this.GAME_OVER:
-        if (Input.state('start')) {
+        if (IG.instance.input.state('start')) {
           this.p1.kill()
           this.p2.kill()
           this.levelpicked = false
@@ -228,7 +235,10 @@ export default class WarriorSoulGame extends Game {
     switch (this.state) {
       case this.START:
         this.background.draw(0, 0)
-        this.scroll.draw((IG.instance.system.width * 1) / 4, IG.instance.system.height * 0.4)
+        this.scroll.draw(
+          (IG.instance.system.width * 1) / 4,
+          IG.instance.system.height * 0.4
+        )
         this.font.draw(
           'WARRIOR SOUL! \n by David Itkin\n    PRESS ENTER',
           IG.instance.system.width * 0.4,
@@ -252,7 +262,10 @@ export default class WarriorSoulGame extends Game {
           this.font.draw('PRESS ENTER!', IG.instance.system.width * 0.4, 700)
         break
       case this.CHAR1:
-        this.scroll.draw((IG.instance.system.width * 1) / 4, IG.instance.system.height * 0.4)
+        this.scroll.draw(
+          (IG.instance.system.width * 1) / 4,
+          IG.instance.system.height * 0.4
+        )
         this.font.draw(
           'P1! Choose Your Fighter! (1, 2, 3)\nX to re-pick\nPress ENTER for P2!',
           IG.instance.system.width / 2,
@@ -261,7 +274,10 @@ export default class WarriorSoulGame extends Game {
         )
         break
       case this.CHAR2:
-        this.scroll.draw((IG.instance.system.width * 1) / 4, IG.instance.system.height * 0.4)
+        this.scroll.draw(
+          (IG.instance.system.width * 1) / 4,
+          IG.instance.system.height * 0.4
+        )
         this.font.draw(
           'P2! Choose Your Fighter! (1, 2, 3)\nX to re-pick\nPress ENTER to FIGHT!',
           IG.instance.system.width / 2,
@@ -271,7 +287,10 @@ export default class WarriorSoulGame extends Game {
         break
       case this.STAGE:
         if (!this.levelpicked) this.background.draw(0, 0)
-        this.scroll.draw((IG.instance.system.width * 1) / 4, IG.instance.system.height * 0.4)
+        this.scroll.draw(
+          (IG.instance.system.width * 1) / 4,
+          IG.instance.system.height * 0.4
+        )
 
         this.font.draw(
           'Select Map (1 or 2)\n\nThen Press ENTER!',
@@ -358,7 +377,10 @@ export default class WarriorSoulGame extends Game {
         )
         break
       case this.GAME_OVER:
-        this.scroll.draw((IG.instance.system.width * 1) / 4, IG.instance.system.height * 0.4)
+        this.scroll.draw(
+          (IG.instance.system.width * 1) / 4,
+          IG.instance.system.height * 0.4
+        )
         this.font.draw(
           this.winner + '\nWarrior, press enter to go \nback to the menu.',
           IG.instance.system.width / 2,
