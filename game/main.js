@@ -83,7 +83,7 @@ export default class WarriorSoulGame extends Game {
     IG.instance.input.bind(Input.KEY.P, 'p2grab')
     IG.instance.input.bind(Input.KEY.O, 'p2dodge')
     IG.instance.input.bind(Input.KEY.SPACE, 'p2att')
-    IG.instance.music.add('media/sounds/crazyb.mp3')
+    IG.instance.music.add('media/sounds/crazyb.*')
     IG.instance.music.add('media/sounds/getready.mp3')
     IG.instance.music.add('media/sounds/happychip.mp3')
     IG.instance.music.volume = 0.4
@@ -91,6 +91,7 @@ export default class WarriorSoulGame extends Game {
   }
 
   update() {
+    super.update()
     switch (this.state) {
       case this.START:
         if (!this.soundplayed) this.warriorsoul.play()
@@ -219,8 +220,6 @@ export default class WarriorSoulGame extends Game {
         }
         break
     }
-
-    super.update()
   }
 
   draw() {

@@ -1,4 +1,8 @@
-import { Entity, IG, AnimationSheet, Sound, Timer } from 'impact'
+import IG from '../lib/impact'
+import { AnimationSheet } from '../lib/animation'
+import Entity from '../lib/entity'
+import { Sound } from '../lib/sound'
+import Timer from '../lib/timer'
 import Hitbox from './Hitbox'
 
 export default class ChiefEntity extends Entity {
@@ -6,7 +10,6 @@ export default class ChiefEntity extends Entity {
     super(x, y, settings)
 
     this.animSheet = new AnimationSheet('media/chiefanim.png', 60, 64)
-
     this.ouch = new Sound('media/sounds/ouch.*')
     this.p1iswin = new Sound('media/sounds/p1win.*')
     this.p2iswin = new Sound('media/sounds/p2wins.*')

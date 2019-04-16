@@ -1,4 +1,8 @@
-import { Entity, IG, AnimationSheet, Input, Sound, System, Timer } from 'impact'
+import IG from '../lib/impact'
+import { AnimationSheet } from '../lib/animation'
+import Entity from '../lib/entity'
+import { Sound } from '../lib/sound'
+import Timer from '../lib/timer'
 import Hitbox from './Hitbox'
 
 export default class FoxEntity extends Entity {
