@@ -4,9 +4,9 @@ module.exports = {
   entry: './index.js',
   mode: 'production',
   output: {
-    path: __dirname + '/docs',
+    path: __dirname,
     filename: 'bundle.js',
-    publicPath: '/docs/',
+    publicPath: '/',
   },
   module: {
     rules: [

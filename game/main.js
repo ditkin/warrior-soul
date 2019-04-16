@@ -10,7 +10,7 @@ import SlasherEntity from './SlasherEntity'
 import ChiefEntity from './ChiefEntity'
 import FoxEntity from './FoxEntity'
 import Battlefield from './battlefield'
-import Warioware from './warioware'
+import Sidelines from './sidelines'
 
 export default class WarriorSoulGame extends Game {
   // bgmusic = new Sound('media/bg.*', false)
@@ -34,7 +34,7 @@ export default class WarriorSoulGame extends Game {
     this.stagepick = new Sound('media/sounds/stagepick.*')
     this.warriorsoul = new Sound('media/sounds/warriorsoul.*')
     this.battlef = new Sound('media/sounds/battlefield.*')
-    this.wariow = new Sound('media/sounds/warioware.*')
+    this.sidelines = new Sound('media/sounds/sidelines.*')
     this.fight = new Sound('media/sounds/fight.*')
     this.chiefSelect = new Sound('media/sounds/chiefselect.*')
     this.kiler = new Sound('media/sounds/kiler.*')
@@ -42,7 +42,7 @@ export default class WarriorSoulGame extends Game {
 
     this.soundplayed = false
     this.bfplayed = false
-    this.wwplayed = false
+    this.sidelinesPlayed = false
 
     this.font = new Font('media/font.png')
     this.winner = null
@@ -115,9 +115,9 @@ export default class WarriorSoulGame extends Game {
           this.loadLevel(Battlefield)
           this.levelpicked = true
         } else if (IG.instance.input.state('2')) {
-          if (!this.wwplayed) this.wariow.play()
-          this.wwplayed = true
-          this.loadLevel(Warioware)
+          if (!this.sidelinesPlayed) this.sidelines.play()
+          this.sidelinesPlayed = true
+          this.loadLevel(Sidelines)
           this.levelpicked = true
         }
         if (this.levelpicked == true && IG.instance.input.state('start')) {
@@ -215,7 +215,7 @@ export default class WarriorSoulGame extends Game {
           this.state = this.START
           this.soundplayed = false
           this.bfplayed = false
-          this.wwplayed = false
+          this.sidelinesPlayed = false
         }
         break
     }
