@@ -29,7 +29,7 @@ export default class FoxEntity extends Entity {
     this.soulB = 100
     this.illurightA = false
     this.illurightB = false
-    this.this.stunTimerA = new Timer(0.5) //=imers for stun, dodge, attack
+    this.stunTimerA = new Timer(0.5) //=imers for stun, dodge, attack
     this.stunTimerB = new Timer(0.5)
     this.jumpTimerA = new Timer(0.5)
     this.jumpTimerB = new Timer(0.5)
@@ -101,11 +101,12 @@ export default class FoxEntity extends Entity {
 
   //handles death
   handleMovementTrace(res) {
+    super.handleMovementTrace(res)
     if (
       res.pos.x <= 50 ||
       res.pos.y <= 50 ||
-      res.pos.x >= System.width - 90 ||
-      res.pos.y > System.height - 90
+      res.pos.x >= IG.instance.system.width - 90 ||
+      res.pos.y > IG.instance.system.height - 90
     ) {
       if (this.type == Entity.TYPE.A && this.deathTimerA.delta() >= 0) {
         this.death.play()
@@ -123,8 +124,8 @@ export default class FoxEntity extends Entity {
         this.stocksB--
         this.deathTimerB.set(5)
         this.soulB = 100
-        this.pos.x = System.width / 2
-        this.pos.y = System.width / 2
+        this.pos.x = IG.instance.system.width / 2
+        this.pos.y = IG.instance.system.width / 2
         if (this.stocksB == 0) {
           this.p1iswin.play()
           IG.instance.game.winner = 'Player 1 WINS!'
@@ -133,7 +134,6 @@ export default class FoxEntity extends Entity {
         }
       }
     }
-    super.handleMovementTrace(res)
   }
 
   checkMovement() {

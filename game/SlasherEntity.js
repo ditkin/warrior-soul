@@ -28,7 +28,7 @@ export default class SlasherEntity extends Entity {
     this.soulA = 100
     this.soulB = 100
 
-    this.this.stunTimerA = new Timer(0.5) //=imers for stun, dodge, attack
+    this.stunTimerA = new Timer(0.5) //=imers for stun, dodge, attack
     this.stunTimerB = new Timer(0.5)
     this.jumpTimerA = new Timer(0.5)
     this.jumpTimerB = new Timer(0.5)
@@ -78,6 +78,7 @@ export default class SlasherEntity extends Entity {
   }
 
   update() {
+    super.update()
     //adjusting the players to respawn after death.
     if (this.type == Entity.TYPE.A && this.deathTimerA.delta() < 0) {
       this.pos.x = 500
@@ -86,7 +87,6 @@ export default class SlasherEntity extends Entity {
       this.pos.x = 500
       this.pos.y = 500
     }
-    super.update()
     this.checkMovement()
     if (this.stunTimerA.delta() >= 0 && this.type == Entity.TYPE.A)
       this.checkInputs()
@@ -129,6 +129,7 @@ export default class SlasherEntity extends Entity {
     }
     super.handleMovementTrace(res)
   }
+
   checkMovement() {
     if (this.currentAnim == 'stunned') {
       this.accel.x = 0

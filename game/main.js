@@ -29,7 +29,6 @@ export default class WarriorSoulGame extends Game {
     this.background = new Image('media/background.jpg')
     this.bigscroll = new Image('media/bigscroll.png')
     this.scroll = new Image('media/scroll.png')
-    this.chiefSelect = new Sound('media/sounds/chiefselect.*')
     this.p1choose = new Sound('media/sounds/p1choose.*')
     this.p2choose = new Sound('media/sounds/p2choose.*')
     this.stagepick = new Sound('media/sounds/stagepick.*')
@@ -37,6 +36,7 @@ export default class WarriorSoulGame extends Game {
     this.battlef = new Sound('media/sounds/battlefield.*')
     this.wariow = new Sound('media/sounds/warioware.*')
     this.fight = new Sound('media/sounds/fight.*')
+    this.chiefSelect = new Sound('media/sounds/chiefselect.*')
     this.kiler = new Sound('media/sounds/kiler.*')
     this.foxe = new Sound('media/sounds/foxe.*')
 
@@ -135,7 +135,6 @@ export default class WarriorSoulGame extends Game {
             IG.instance.system.height * 0.6,
             { entype: 'A', stocks: 4 }
           )
-          //say CHIEF
         }
         if (IG.instance.input.state('2') && this.p1 == null) {
           this.kiler.play()
@@ -223,14 +222,8 @@ export default class WarriorSoulGame extends Game {
   }
 
   draw() {
-    // Draw all entities and backgroundMaps
     super.draw()
 
-    // Add your own drawing code here
-    var x = IG.instance.system.width / 2,
-      y = IG.instance.system.height / 2
-
-    this.font.draw('It Works!', x, y, Font.ALIGN.CENTER)
     switch (this.state) {
       case this.START:
         this.background.draw(0, 0)

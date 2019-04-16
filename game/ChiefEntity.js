@@ -78,6 +78,8 @@ export default class ChiefEntity extends Entity {
 
   //handles death
   handleMovementTrace(res) {
+    super.handleMovementTrace(res)
+
     if (
       res.pos.x <= 50 ||
       res.pos.y <= 50 ||
@@ -110,7 +112,7 @@ export default class ChiefEntity extends Entity {
         }
       }
     }
-    super.handleMovementTrace(res)
+    //super.handleMovementTrace(res)
   }
 
   checkMovement() {

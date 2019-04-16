@@ -138,7 +138,7 @@ export default class Hitbox extends Entity {
     if (settings.attack == 'zebra') {
       this.currentAnim = this.anims.zebra
       this.zebra.play()
-      amzebra = true
+      this.amzebra = true
       if (this.vel.x < 0) this.currentAnim.flip.x = true
     }
     if (settings.attack == 'nslash') {
