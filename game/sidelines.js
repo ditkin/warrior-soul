@@ -7,7 +7,7 @@ export default {
       height: 1,
       linkWithCollision: false,
       visible: 1,
-      tilesetName: 'media/girlfight.jpg',
+      tilesetName: 'media/sidelines.jpg',
       data: [[1]],
       tilesize: 1000,
       preRender: false,

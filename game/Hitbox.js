@@ -1,4 +1,5 @@
-import { Entity, AnimationSheet, Input, Sound, Timer } from 'impact'
+import IG from '../lib/impact'
+import { Entity, AnimationSheet, Sound, Timer } from 'impact'
 
 export default class Hitbox extends Entity {
   constructor(x, y, settings) {
@@ -128,8 +129,10 @@ export default class Hitbox extends Entity {
       this.currentAnim = null
     }
     if (settings.attack == 'kick') {
-      if (Input.state('p1down') && this.type == Entity.TYPE.A) this.vel.y += 50
-      if (Input.state('p2down') && this.type == Entity.TYPE.B) this.vel.y += 50
+      if (IG.instance.input.state('p1down') && this.type == Entity.TYPE.A)
+        this.vel.y += 50
+      if (IG.instance.input.state('p2down') && this.type == Entity.TYPE.B)
+        this.vel.y += 50
       this.currentAnim = null
     }
     if (settings.attack == 'weak') {
