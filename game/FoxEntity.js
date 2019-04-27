@@ -18,10 +18,10 @@ export default class FoxEntity extends Entity {
     this.summonzebra = new Sound('media/sounds/summonzebra.*')
     this.hayaa = new Sound('media/sounds/hayaa.*')
     this.size = { x: 50, y: 60 }
-    this.maxVel = { x: 900, y: 900 }
+    this.maxVel = { x: 2800, y: 1200 }
     this.walkAcc = 3000
     this.jumpVel = -500
-    this.damping = 1.28
+    this.damping = 1.22
     this.jumped = false
     this.stocksA = 4
     this.stocksB = 4
@@ -54,7 +54,7 @@ export default class FoxEntity extends Entity {
     this.addAnim('moving', 0.12, [30, 31, 32, 33], false)
     this.addAnim('jumping', 0.2, [31, 33, 48, 49, 16, 110], true)
     this.addAnim('flying', 0.1, [65, 66, 68, 69, 87, 88], false)
-    this.addAnim('shooting', 0.2, [72, 73, 74, 75, 76], false)
+    this.addAnim('shooting', 0.2, [72, 72, 72, 72, 15], false)
     this.addAnim('throwing', 0.1, [147, 148, 150, 151, 152], false)
     this.addAnim('shining', 0.1, [111, 136], false)
     this.addAnim('stunned', 0.3, [123, 131, 178, 179], false)
@@ -64,10 +64,10 @@ export default class FoxEntity extends Entity {
     this.addAnim(
       'illusion',
       0.1,
-      [84, 84, 111, 129, 111, 129, 111, 129, 111, 129],
+      [100, 101, 102, 103, 104, 129, 111, 129, 111, 129],
       false
     )
-    this.addAnim('kick', 0.2, [159, 164, 167, 167, 167, 168], true)
+    this.addAnim('kick', 0.2, [161, 164], true)
 
     this.currentAnim = this.anims.idle
     if (settings.entype == 'A') {
@@ -1641,6 +1641,9 @@ export default class FoxEntity extends Entity {
         this.currentAnim = this.anims.crouched
       if (this.shootTimerA.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerA.delta() < 0) this.currentAnim = this.anims.stunned
+      if (this.kickTimerA.delta() < 0) this.currentAnim = this.anims.kick
+      if (this.illusionTimerA.delta() < 0)
+        this.currentAnim = this.anims.illusion
       if (this.dodgeTimerA.delta() <= -0.4 || this.deathTimerA.delta() < 0)
         this.currentAnim = this.anims.dodging
       this.currentAnim.flip.x = this.facingRight
@@ -1653,6 +1656,9 @@ export default class FoxEntity extends Entity {
         this.currentAnim = this.anims.crouched
       if (this.shootTimerB.delta() < 0) this.currentAnim = this.anims.shooting
       if (this.stunTimerB.delta() < 0) this.currentAnim = this.anims.stunned
+      if (this.kickTimerB.delta() < 0) this.currentAnim = this.anims.kick
+      if (this.illusionTimerB.delta() < 0)
+        this.currentAnim = this.anims.illusion
       if (this.dodgeTimerB.delta() <= -0.4 || this.deathTimerB.delta() < 0)
         this.currentAnim = this.anims.dodging
       this.currentAnim.flip.x = this.facingRight
