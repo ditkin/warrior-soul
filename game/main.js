@@ -25,7 +25,7 @@ export default class WarriorSoulGame extends Game {
     // this.loadLevel(data)
     // this.player = this.spawnEntity(PlayerEntity, 20, 30)
 
-    this.gravity = 0
+    this.gravity = 600
     this.background = new Image('media/background.jpg')
     this.bigscroll = new Image('media/bigscroll.png')
     this.scroll = new Image('media/scroll.png')
@@ -52,6 +52,7 @@ export default class WarriorSoulGame extends Game {
     this.p2picked = null
     this.levelpicked = false
     this.spawnTimer = new Timer(1)
+    this.startTimer = new Timer(0.5)
     this.scrollTimer = new Timer(1)
 
     this.state = 0
@@ -97,13 +98,14 @@ export default class WarriorSoulGame extends Game {
         if (!this.soundplayed) this.warriorsoul.play()
         this.soundplayed = true
         if (IG.instance.input.state('start')) {
-          this.scrollTimer.set(2)
-          this.state++
+          this.state = 2
+        } else if (IG.instance.input.state('1')) {
+          this.state = 1
         }
         break
       //instructinoal screen.
       case this.INSTR:
-        if (IG.instance.input.state('start') && this.scrollTimer.delta() >= 0) {
+        if (IG.instance.input.state('start')) {
           this.stagepick.play()
           this.state++
         }
@@ -204,9 +206,6 @@ export default class WarriorSoulGame extends Game {
           this.state++
         }
         break
-      case this.GAME:
-        this.gravity = 600
-        break
       case this.GAME_OVER:
         if (IG.instance.input.state('start')) {
           this.p1.kill()
@@ -232,11 +231,25 @@ export default class WarriorSoulGame extends Game {
           IG.instance.system.height * 0.4
         )
         this.font.draw(
-          'WARRIOR SOUL! \n by David Itkin\n    PRESS ENTER',
+          'WARRIOR SOUL!',
           IG.instance.system.width * 0.4,
           IG.instance.system.height / 2
         )
-        this.font.draw('PRESS ENTER TO FIGHT!!!!')
+        this.font.draw(
+          'by David Itkin',
+          IG.instance.system.width * 0.4,
+          IG.instance.system.height / 2 + 25
+        )
+        this.font.draw(
+          'Press 1 for instructions',
+          IG.instance.system.width * 0.4 - 60,
+          IG.instance.system.height / 2 + 60
+        )
+        this.font.draw(
+          'PRESS ENTER TO FIGHT',
+          IG.instance.system.width * 0.4 - 30,
+          IG.instance.system.height / 2 + 85
+        )
         break
       case this.INSTR:
         this.bigscroll.draw(0, 0)

@@ -18,10 +18,10 @@ export default class FoxEntity extends Entity {
     this.summonzebra = new Sound('media/sounds/summonzebra.*')
     this.hayaa = new Sound('media/sounds/hayaa.*')
     this.size = { x: 50, y: 60 }
-    this.maxVel = { x: 2800, y: 1200 }
+    this.maxVel = { x: 900, y: 900 }
     this.walkAcc = 3000
     this.jumpVel = -500
-    this.damping = 1.22
+    this.damping = 1.28
     this.jumped = false
     this.stocksA = 4
     this.stocksB = 4

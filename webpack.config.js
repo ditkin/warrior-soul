@@ -2,10 +2,6 @@ const express = require('express')
 
 module.exports = {
   entry: './index.js',
-  // entry: {
-  //   game: './index.js',
-  //   wm: './start.weltmeister.js',
-  // },
   mode: 'development',
   devtool: '#source-map',
   devServer: {
