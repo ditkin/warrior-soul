@@ -29,6 +29,10 @@ export default class WarriorSoulGame extends Game {
     this.background = new Image('media/background.jpg')
     this.bigscroll = new Image('media/bigscroll.png')
     this.scroll = new Image('media/scroll.png')
+
+    this.battlefieldImage = new Image('media/battlefield.jpg')
+    this.sidelinesImage = new Image('media/sidelines.jpg')
+
     this.p1choose = new Sound('media/sounds/p1choose.*')
     this.p2choose = new Sound('media/sounds/p2choose.*')
     this.stagepick = new Sound('media/sounds/stagepick.*')
@@ -66,9 +70,9 @@ export default class WarriorSoulGame extends Game {
 
     IG.instance.input.bind(Input.KEY.ENTER, 'start')
     IG.instance.input.bind(Input.KEY.X, 'x')
-    IG.instance.input.bind(Input.KEY._1, '1')
-    IG.instance.input.bind(Input.KEY._2, '2')
-    IG.instance.input.bind(Input.KEY._3, '3')
+    IG.instance.input.bind(Input.KEY._1, 'one')
+    IG.instance.input.bind(Input.KEY._2, 'two')
+    IG.instance.input.bind(Input.KEY._3, 'three')
     IG.instance.input.bind(Input.KEY.W, 'p1up')
     IG.instance.input.bind(Input.KEY.A, 'p1left')
     IG.instance.input.bind(Input.KEY.S, 'p1down')
@@ -99,7 +103,7 @@ export default class WarriorSoulGame extends Game {
         this.soundplayed = true
         if (IG.instance.input.state('start')) {
           this.state = 2
-        } else if (IG.instance.input.state('1')) {
+        } else if (IG.instance.input.state('p1att')) {
           this.state = 1
         }
         break
@@ -111,12 +115,12 @@ export default class WarriorSoulGame extends Game {
         }
         break
       case this.STAGE:
-        if (IG.instance.input.state('1')) {
+        if (IG.instance.input.state('p1att')) {
           if (!this.bfplayed) this.battlef.play()
           this.bfplayed = true
           this.loadLevel(Battlefield)
           this.levelpicked = true
-        } else if (IG.instance.input.state('2')) {
+        } else if (IG.instance.input.state('p1up')) {
           if (!this.sidelinesPlayed) this.sidelines.play()
           this.sidelinesPlayed = true
           this.loadLevel(Sidelines)
@@ -129,7 +133,7 @@ export default class WarriorSoulGame extends Game {
         }
         break
       case this.CHAR1:
-        if (IG.instance.input.state('1') && this.p1 == null) {
+        if (IG.instance.input.state('p1att') && this.p1 == null) {
           this.chiefSelect.play()
           this.p1 = this.spawnEntity(
             ChiefEntity,
@@ -138,7 +142,7 @@ export default class WarriorSoulGame extends Game {
             { entype: 'A', stocks: 4 }
           )
         }
-        if (IG.instance.input.state('2') && this.p1 == null) {
+        if (IG.instance.input.state('p1up') && this.p1 == null) {
           this.kiler.play()
           this.p1 = this.spawnEntity(
             SlasherEntity,
@@ -147,7 +151,7 @@ export default class WarriorSoulGame extends Game {
             { entype: 'A', stocks: 4 }
           )
         }
-        if (IG.instance.input.state('3') && this.p1 == null) {
+        if (IG.instance.input.state('p1grab') && this.p1 == null) {
           this.foxe.play()
           this.p1 = this.spawnEntity(
             FoxEntity,
@@ -168,7 +172,7 @@ export default class WarriorSoulGame extends Game {
         }
         break
       case this.CHAR2:
-        if (IG.instance.input.state('1') && this.p2 == null) {
+        if (IG.instance.input.state('p1att') && this.p2 == null) {
           this.chiefSelect.play()
           this.p2 = this.spawnEntity(
             ChiefEntity,
@@ -178,7 +182,7 @@ export default class WarriorSoulGame extends Game {
           )
           this.p2.currentAnim.flip.x
         }
-        if (IG.instance.input.state('2') && this.p2 == null) {
+        if (IG.instance.input.state('p1up') && this.p2 == null) {
           this.kiler.play()
           this.p2 = this.spawnEntity(
             SlasherEntity,
@@ -188,7 +192,7 @@ export default class WarriorSoulGame extends Game {
           )
           this.p2.currentAnim.flip.x
         }
-        if (IG.instance.input.state('3') && this.p2 == null) {
+        if (IG.instance.input.state('p1grab') && this.p2 == null) {
           this.foxe.play()
           this.p2 = this.spawnEntity(
             FoxEntity,
@@ -241,7 +245,7 @@ export default class WarriorSoulGame extends Game {
           IG.instance.system.height / 2 + 25
         )
         this.font.draw(
-          'Press 1 for instructions',
+          'Press Q for instructions',
           IG.instance.system.width * 0.4 - 60,
           IG.instance.system.height / 2 + 60
         )
@@ -272,7 +276,7 @@ export default class WarriorSoulGame extends Game {
           IG.instance.system.height * 0.4
         )
         this.font.draw(
-          'P1! Choose Your Fighter! (1, 2, 3)\nX to re-pick\nPress ENTER for P2!',
+          'P1! Choose Your Fighter! (Q, W, E)\nX to re-pick\nPress ENTER for P2!',
           IG.instance.system.width / 2,
           IG.instance.system.height / 2,
           Font.ALIGN.CENTER
@@ -284,7 +288,7 @@ export default class WarriorSoulGame extends Game {
           IG.instance.system.height * 0.4
         )
         this.font.draw(
-          'P2! Choose Your Fighter! (1, 2, 3)\nX to re-pick\nPress ENTER to FIGHT!',
+          'P2! Choose Your Fighter! (Q, W, E)\nX to re-pick\nPress ENTER to FIGHT!',
           IG.instance.system.width / 2,
           IG.instance.system.height / 2,
           Font.ALIGN.CENTER
@@ -292,13 +296,28 @@ export default class WarriorSoulGame extends Game {
         break
       case this.STAGE:
         if (!this.levelpicked) this.background.draw(0, 0)
+        // this.battlefieldImage.draw(
+        //   IG.instance.system.width * 0.25,
+        //   IG.instance.system.height * 0.4,
+        //   null,
+        //   null,
+        //   250,
+        //   200
+        // )
+        // this.sidelinesImage.draw(
+        //   IG.instance.system.width * 0.55,
+        //   IG.instance.system.height * 0.4,
+        //   null,
+        //   null,
+        //   250,
+        //   200
+        // )
         this.scroll.draw(
           (IG.instance.system.width * 1) / 4,
           IG.instance.system.height * 0.4
         )
-
         this.font.draw(
-          'Select Map (1 or 2)\n\nThen Press ENTER!',
+          'Select Map (Q or W)\n\nThen Press ENTER!',
           (IG.instance.system.width * 1) / 2,
           IG.instance.system.height / 2,
           Font.ALIGN.CENTER
